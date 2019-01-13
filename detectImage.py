@@ -1,6 +1,6 @@
 from pyautogui import screenshot
 from PIL import Image
-from sys import argv
+
 import computeHistogram, math
 
 BOX_SIZE_SMALL = 50
@@ -19,7 +19,7 @@ BANK_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Bank Images/vals.txt"
 INTERFACE_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Interface/vals.txt"
 
 def getScreenLocation(path,size,code):
-	image = Image.open("/Users/kunaalsharma/Desktop/bot/Test Images/4.png","r")
+	image = screenshot()
 	image = cropImage(image,code)
 	images, imagesMap = tesselateScreenshot(image,size)
 	imageHistograms = computeHistogram.computeAllVals(images)
@@ -124,6 +124,3 @@ def cropImage(image,code):
 		return image.crop((x,y,x+x,y+y))
 	elif code==IMAGE_BOTTOM_LEFT:
 		return image.crop((0,y,x,y+y))
-
-if __name__=="__main__":
-	print(getScreenLocation(BANK_VALS_PATH,BOX_SIZE_MED,IMAGE_CENTER))
