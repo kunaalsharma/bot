@@ -7,16 +7,18 @@ from PIL import Image
 from detectImage import reshape
 import pyautogui
 
-MIN_DURATION = 8 #ms
+MIN_DURATION = 12 #ms
 X_MIN, X_MAX, Y_MIN, Y_MAX = 100,1300,100,700 #Dimensions of 1440x900 screen
+pyautogui.PAUSE = 0.000001 #seconds
 
 '''
 Generates points along a bezier curve. Moves along the bezier curve 
 every 30 ms with randomly generated noise between -10 and 10 ms.
 '''
-def move(xT,yT,size):
-	teleportMouseRandom()
-	controlPoints = generateControlPoints(xT+randInt(xT,xT+size),yT+randInt(yT,yT+size))
+def move(xT,yT,size,teleportRandom=False):
+	if teleportRandom:
+		teleportMouseRandom()
+	controlPoints = generateControlPoints(xT+randint(xT,xT+size),yT+randint(yT,yT+size))
 	duration = moveDuration(xT,yT)
 	mousePositions = generateBezierCurve(controlPoints,duration)
 	ewma = randint(0,MIN_DURATION) - MIN_DURATION/2
@@ -31,7 +33,7 @@ Generates control points for a bezier curve. Uses the starting and ending
 points as the first and last control points, and randomly generates
 the rest in the rectangle formed by the first and last.
 '''
-def generateControlPoints(xT,yT,n=4):
+def generateControlPoints(xT,yT,n=3):
 	x,y = position()
 	controlPoints = [(x,y)]
 
@@ -89,18 +91,21 @@ def factorial(n):
 Calculates the amount of time it should take the mouse to move 
 from the current position to xT,yT. The duration is based upon 
 the distance, and is the root of distance (short moves are quick, 
-longer moves are slow, but the growth is not linear). Constant of 12, 
-as the maximum move on a 1440x900 screen should take 500ms
+longer moves are slow, but the growth is not linear). 
 '''
 def moveDuration(xT,yT):
-	fConstant = 12 #1693 distance should take 500 ms
+	fConstant = 14 #chosen randomly
 
 	x,y = position()
 	distance = ((x-xT)**2 + (y-yT)**2)**0.5
-	return int(fConstant * distance**0.5)
+	return int(fConstant * distance ** 0.6)
 
 '''
 Teleports the mouse to a location chosen uniformly at random
 '''
 def teleportMouseRandom():
-	moveTo(randInt(X_MIN,X_MAX),randInt(Y_MIN,Y_MAX))
+	moveTo(randint(X_MIN,X_MAX),randint(Y_MIN,Y_MAX))
+
+
+if __name__=="__main__":
+	move(500,200,20,teleportRandom=True)
