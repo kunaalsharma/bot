@@ -98,7 +98,7 @@ def moveDuration(xT,yT):
 
 	x,y = position()
 	distance = ((x-xT)**2 + (y-yT)**2)**0.5
-	return int(fConstant * distance ** 0.6)
+	return int(fConstant * distance ** 0.5)
 
 '''
 Teleports the mouse to a location chosen uniformly at random
@@ -108,4 +108,4 @@ def teleportMouseRandom():
 
 
 if __name__=="__main__":
-	move(500,200,20,teleportRandom=True)
+	move(350,87,10,teleportRandom=True)

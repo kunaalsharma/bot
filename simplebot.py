@@ -49,8 +49,7 @@ def waitForBankOpen():
 
 	for i in range(NUM_TRIES):
 		sleep(0.5)
-		success = detectImage.checkScreenLocation(bankRegion,bankImage)
-		if success:
+		if detectImage.checkScreenLocation(bankRegion,bankImage):
 			return True
 	return False
 

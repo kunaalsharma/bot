@@ -18,7 +18,7 @@ IMAGE_FULL = 5
 BANK_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Bank Images/vals.txt"
 INTERFACE_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Interface/vals.txt"
 
-def getScreenLocation(path,size,code):
+def getScreenLocation(path,size,code,show=False):
 	image = screenshot()
 	image = cropImage(image,code)
 	images, imagesMap = tesselateScreenshot(image,size)
@@ -27,8 +27,9 @@ def getScreenLocation(path,size,code):
 
 	locationIndex = getMinHistogram(imageHistograms,targetHistograms)
 	x,y = imagesMap[locationIndex]
-	markImage(x,y,size,image)
-	return (x,y,image.crop(x,y,x+size,y+size))
+	if show:
+		markImage(x,y,size,image)
+	return (x,y)
 
 def checkScreenLocation(region,image):
 	screen = screenshot(region)

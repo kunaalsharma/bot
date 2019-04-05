@@ -1,33 +1,22 @@
-from pyautogui import click
-from pyautogui import press
+import mouse
+import detectImage 
+import time
+import numpy as np
+import pyautogui 
 
-from random import randint
+baniteValsPath = "/Users/kunaalsharma/Desktop/bot/Mining/Banite/Normal Rock/vals.txt"
 
-from time import sleep 
-
-'''
-Literally the simplest possible bot
-'''
-
-'''
-Click, 
-wait 0.5 seconds,
-press 2,
-wait 0.5 seconds,
-press 2,
-wait 0.5 seconds,
-press space,
-wait 50 seconds
-'''
-sleep(2)
-while(True):
-	click()
-	sleep(1+randint(0,1000)/1000 - 0.5)
-	press("2")
-	sleep(1+randint(0,1000)/1000 - 0.5)
-	press("2")
-	sleep(1+randint(0,1000)/1000 - 0.5)
-	press(" ")
-	press(" ")
-	press(" ")
-	sleep(70+randint(0,25)-12.5)
+while True:
+	sleepDuration = -1
+	while sleepDuration < 0:
+		sleepDuration = np.random.normal(5,20)
+	print(f"Sleeping {sleepDuration} seconds")
+	time.sleep(sleepDuration)
+	print("Searching for target")
+	x, y  = detectImage.getScreenLocation(baniteValsPath,detectImage.BOX_SIZE_SMALL,detectImage.IMAGE_FULL,show=False)
+	x = x//4
+	y = y//4
+	print(f"Found target at {x},{y}")
+	mouse.move(x,y,10) #10 = error box size
+	pyautogui.click()
+	print(f"Clicked")
