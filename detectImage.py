@@ -2,6 +2,7 @@ from pyautogui import screenshot
 from PIL import Image
 
 import computeHistogram, math
+import numpy as np
 
 BOX_SIZE_SMALL = 50
 BOX_SIZE_MED = 100
@@ -18,18 +19,29 @@ IMAGE_FULL = 5
 BANK_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Bank Images/vals.txt"
 INTERFACE_VALS_PATH = "/Users/kunaalsharma/Desktop/bot/Interface/vals.txt"
 
-def getScreenLocation(path,size,code,show=False):
+def getScreenLocation(path,size,code,show=False,N=3,random=True):
 	image = screenshot()
 	image = cropImage(image,code)
 	images, imagesMap = tesselateScreenshot(image,size)
 	imageHistograms = computeHistogram.computeAllVals(images)
 	targetHistograms = computeHistogram.read(path)
 
-	locationIndex = getMinHistogram(imageHistograms,targetHistograms)
-	x,y = imagesMap[locationIndex]
+	locationIndexes = getMinNHistograms(imageHistograms,targetHistograms,N)
+	pos = []
+	for ind in locationIndexes:
+		pos.append(imagesMap[ind])
+
 	if show:
-		markImage(x,y,size,image)
-	return (x,y)
+		NMarkImage(pos,size,image)
+
+	if random:
+		return selectRandom(pos) #Min N histograms
+	else:
+		return pos[0] #Min histogram
+
+def selectRandom(pos):
+	ind = int(np.random.uniform(0,len(pos)))
+	return pos[ind]
 
 def checkScreenLocation(region,image):
 	screen = screenshot(region)
@@ -69,27 +81,51 @@ def getMinHistogram(imageHistograms,targetHistograms):
 		return -1
 	return minIndex
 
-def markImage(xT,yT,size,image):
+def getMinNHistograms(imageHistograms, targetHistograms, N):
+	distances = []
+	for index,hist in enumerate(imageHistograms):
+		for target in targetHistograms:
+			distances.append((index, computeHistogram.compare(hist,target)))
+	distances = sorted(distances, key = lambda pair : pair[1])
+	minHistograms = {}
+
+	for index, _ in distances:
+		if not index in minHistograms:
+			minHistograms[index] = -1
+		if len(minHistograms)==N:
+			break
+	return list(minHistograms.keys())
+
+def shouldBeMarked(x,y,positions,size):
+	for xT,yT in positions:
+		if y==yT:
+			if x>=xT and x < xT + size:
+				return True
+		elif y==yT + size:
+			if x>=xT and x < xT + size:
+				return True
+		elif x==xT:
+			if y>=yT and y < yT + size:
+				return True
+		elif x==xT + size:
+			if y>=yT and y < yT + size:
+				return True
+	return False
+
+def NMarkImage(positions,size,image):
 	newImage = []
 	imageData = reshape(image)
 
 	for y in range(image.size[1]):
 		for x in range(image.size[0]):
-			if (x >= xT) and (x < xT + size) and (y == yT):
-				newImage.append((255,0,0,255))
-			elif (x >= xT) and (x < xT + size) and (y == yT + size):
-				newImage.append((255,0,0,255))
-			elif (y >= yT) and (y < yT + size) and (x == xT):
-				newImage.append((255,0,0,255))
-			elif (y >= yT) and (y < yT + size) and (x == xT + size):
+			if shouldBeMarked(x,y,positions,size):
 				newImage.append((255,0,0,255))
 			else:
 				newImage.append(imageData[y][x])
-
 	markedImage = Image.new(image.mode,image.size)
 	markedImage.putdata(newImage)
 	markedImage.show()
-	return
+	return	
 
 def reshape(image):
 	imageData = image.getdata()

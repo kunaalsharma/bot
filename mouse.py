@@ -106,6 +106,15 @@ Teleports the mouse to a location chosen uniformly at random
 def teleportMouseRandom():
 	moveTo(randint(X_MIN,X_MAX),randint(Y_MIN,Y_MAX))
 
+'''
+Moves the mouse to a random location in the center of the screen.
+'''
+def moveCenter():
+	xMin = (X_MIN + X_MAX)//4
+	xMax = xMin * 2
+	yMin = (Y_MIN + Y_MAX)//4
+	yMax = yMin * 2
+	move(randint(xMin,xMax),randint(yMin,yMax),100)
 
 if __name__=="__main__":
 	move(350,87,10,teleportRandom=True)

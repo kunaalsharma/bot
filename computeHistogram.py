@@ -1,5 +1,6 @@
 import os, sys, math
 from PIL import Image
+import numpy as np
 
 
 BUCKET_SIZE = 10
