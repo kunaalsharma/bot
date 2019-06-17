@@ -114,7 +114,7 @@ def moveCenter():
 	xMax = xMin * 2
 	yMin = (Y_MIN + Y_MAX)//4
 	yMax = yMin * 2
-	move(randint(xMin,xMax),randint(yMin,yMax),100)
+	move(randint(xMin,xMax)//2,randint(yMin,yMax)//2,100)
 
 if __name__=="__main__":
-	move(350,87,10,teleportRandom=True)
+	move(500,100,10,teleportRandom=True)
